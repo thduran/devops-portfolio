@@ -1,0 +1,17 @@
+# Arquivos de estado local do Terraform
+*.tfstate
+*.tfstate.backup
+
+# Arquivos de log de travamento
+crash.log
+
+# Diretório de módulos e plugins local
+.terraform/
+.terraform.lock.hcl
+
+# Arquivos de variáveis locais. 
+# NUNCA envie seus valores/segredos para o Git!
+*.tfvars.json
+
+# Ignore arquivos de sistema
+.DS_Store

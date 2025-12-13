@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  APP_NAME_CONFIG: "k8s app test"
+  APP_VERSION_CONFIG: "5.0"
+  APP_AUTHOR_CONFIG: "Thiago Duran"

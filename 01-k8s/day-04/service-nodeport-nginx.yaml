@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-nodeport
+spec:
+  selector:
+    app: meu-site
+  ports:
+    - port: 80   # a requisição vai bater na porta 80 do service...
+      targetPort: 80   # e vai ser redirecionada pra porta 80 do pod
+      name: http
+      protocol: TCP
+      nodePort: 30000
+  type: NodePort

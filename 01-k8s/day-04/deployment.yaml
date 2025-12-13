@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meudeployment
+spec:
+  replicas: 10
+  selector:
+     matchLabels:
+       app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: kubedevio/web-color:blue
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: webcolor
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 80   # a requisição vai bater na porta 80 do service...
+      targetPort: 80   # e vai ser redirecionada pra porta 80 do pod
+      name: http
+      protocol: TCP
+      nodePort: 30000
+  type: NodePort # ClusterIP
