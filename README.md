@@ -45,14 +45,12 @@ Além dos estudos diários, estou consolidando o conhecimento em projetos mais c
 ### 1. [PROJETO] Pipeline CI/CD para aplicação web
 * **Descrição:** Criação de um pipeline completo com GitHub Actions que realiza testes, build de uma imagem Docker, push para um registry e deploy automatizado em um cluster Kubernetes.
 * **Tecnologias utilizadas:** GitHub Actions, Docker, Kubernetes (Deployments, Services).
-* **[Link pra pasta do projeto](./link-para-a-pasta)**
+* **(link em breve)*
 
 ### 2. [PROJETO] Infraestrutura como código para cluster na nuvem
 * **Descrição:** Provisionamento de toda a infraestrutura para um ambiente de produção na AWS utilizando Terraform, incluindo VPC cluster Kubernetes (EKS) e os recursos necessários para a aplicação.
 * **Tecnologias utilizadas:** Terraform, AWS (VPC, EKS, IAM), Kubernetes.
-* **[Link pra pasta do projeto](./link-para-a-pasta)**
-
-*(Você vai adicionar mais projetos aqui conforme avança no plano de estudos)*
+* **(link em breve)*
 
 ---
 
