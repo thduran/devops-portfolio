@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s     # frequencia de coleta
+  scrape_timeout: 5s       # tempo pra considerar que ta fora do ar
+  evaluation_interval: 15s # frequencia que as metricas serao manipuladas
+
+rule_files:
+  - alerts.rules
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'api'
+    scrape_interval: 5s
+    scrape_timeout: 2s
+    static_configs: 
+      - targets: ['api:80']  # nome do service no compose
+        labels:
+          versao: 1.0
+
+  - job_name: 'mongodb_exporter'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['mongoexporter:9216']
+        labels:
+          database: mongodb
+
+alerting:
+  alertmanagers:
+  - scheme: http
+    statics_configs:
+    - targets: 
+      - 'alertmanager:9093'

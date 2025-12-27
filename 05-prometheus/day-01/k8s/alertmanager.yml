@@ -1,0 +1,42 @@
+global:
+# configuração da rota principal
+route:
+  # nome do receiver
+  receiver: Default
+  # agrupador de alarmes. Aqui uso valores das labels
+  group_by: ['alertname']
+  # tempo de espera pra mandar a notificação pra um grupo de alertas.
+  # é usado pra esperar mais alertar e enviar todos agrupados na mesma notificação.
+  group_wait: 15s
+  # intervalo entre o envio de uma notificação e outra
+  group_interval: 15s
+  # intervalo pra repetir o envio de uma notificação
+  repeat_interval: 1m
+
+  routes:
+  - receiver: AlertaDataBase
+    match:
+      team: mongodb
+
+  - receiver: AlertaWebApi
+    match:
+      team: webapi
+
+receivers:
+- name: Default
+  # Configuração de fallback (se não der match em nada)
+  slack???_configs:
+  - channel: '#???'
+    send_resolved: true
+
+- name: AlertaDataBase
+  slack???_configs:
+  - channel: '#???'
+    text: "O banco de dados {{ ??? }} está com problemas!"
+    send_resolved: true
+
+- name: AlertaWebApi
+  slack???_configs:
+  - channel: '#???'
+    text: "Atenção time de Devs: {{ ??? }}" 
+    send_resolved: true

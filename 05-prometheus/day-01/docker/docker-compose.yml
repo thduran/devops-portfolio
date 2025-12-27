@@ -1,0 +1,67 @@
+version: '3.8'
+services:
+  api:
+    image: kubedevio/pedelogo-catalogo:v1.0.0
+    ports:
+      - "8080:80"
+    networks:
+      - pedelogo
+    depends_on:
+      - pedelogo-mongodb
+    environment:
+      Mongo__Host: "pedelogo-mongodb"
+      Mongo__User: "mongouser"
+      Mongo__Password: "mongopwd"
+      Mongo__Port: "27017"
+      Mongo__Database: "admin"
+  
+  pedelogo-mongodb:
+    image: mongo:4.1
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml          # mapeando prometheus.yaml
+    networks:
+      - pedelogo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongouser
+      MONGO_INITDB_ROOT_PASSWORD: mongopwd
+
+  mongoexporter:
+    image: fabricioveronez/mongo_exporter
+    ports:
+      - "9216:9216"
+    networks:
+      - pedelogo
+    depends_on:
+      - pedelogo-mongodb
+    environment:
+      MONGODB_URI: "mongodb://mongouser:mongopwd@pedelogo-mongodb:27017"
+
+  prometheus:
+    image: prom/prometheus:vxxx
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./alert.rules.yaml:/etc/prometheus/alerts.rules
+    ports:
+      - "9090:9090"
+    depends_on:
+      - api
+    networks:
+      - pedelogo
+
+  alertmanager:
+    image: prom/alertmanager:vxx
+    ports:
+    - 9093:9093
+    volumes:
+      - ./alertmanager.yaml:/prometheus/alertmanager.yml
+    command:
+      - '--config.file=/prometheus/alertmanager.yml'
+    networks:
+      - pedelogo
+
+volumes:
+  db_mongo:
+
+networks:
+  pedelogo:
+    driver: bridge

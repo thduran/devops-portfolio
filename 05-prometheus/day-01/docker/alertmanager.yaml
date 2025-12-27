@@ -1,0 +1,30 @@
+global:
+route:
+  receiver: Default # obrigatorio para enviar os alertas cujas regras nao estao sendo atingidas
+  group_by: ['alertname']
+  group_wait: 15s # quanto tempo deve esperar antes de enviar a notificação, para agrupar notificacoes
+  group_interval: 15s # após quanto tempo o mesmo grupo pode enviar alertas de novo
+  repeat_interval: 1m # mesma notificação pode ser enviada apos quanto tempo
+
+  routes:
+  - receiver: AlertaDataBase
+    match:
+      team: mongodb
+
+  - receiver: AlertaWebAPI
+    match:
+      team: webapi
+
+receivers:
+- name: Default
+  webhook_configs:
+  - url: 'https://pruu.herokuapp.com/dump/wpwebhookdefault'
+
+- name: AlertaDataBase
+  webhook_configs:
+  - url: 'https://pruu.herokuapp.com/dump/wpwebhookmongodb'
+
+- name: AlertaWebAPI
+  webhook_configs:
+  - url: 'https://pruu.herokuapp.com/dump/wpwebhookwebapi'
+
