@@ -26,10 +26,10 @@ As métricas se dividem em métricas de sistema e de negócio.
 
 ## 2. Arquitetura do Prometheus
 
-* Prometheus Server
+* Prometheus Server \
 Tem o storage do TSDB, retrieval e o PromQL.
-
-* TSDB (Time Series Database)
+ 
+* TSDB (Time Series Database) \
 Armazena bloco de dados armazenados de 2 em 2h. \
 Pode configurar quando apagar/compactar os dados. \
 Ao compactar ganha espaço mas perde precisão. \
@@ -37,11 +37,11 @@ Devido a isso métricas de negocio é recomendado armazenar em outro lugar e nã
 
 * Adapter: Permite armazenar os dados em outros lugares, como o Elasticsearch, OpenTSDB. Ele pode ser somente leitura, somente escrita ou escrita e leitura.
 
-* Retrieval
+* Retrieval \
 Parte de coleta das métricas. \
 A aplicação não envia as métricas, o Prometheus que coleta ativamente, a app só abre um endpoint pro Prometheus coletar.
 
-* PromQL
+* PromQL \
 Linguagem para executar queries.
 
 ### Componentes do Ecossistema
@@ -65,7 +65,7 @@ Teste da API:
 Browser teste: \
 localhost:8080/swagger \
 Clicar em GET produto, execute. Depois em POST produto, try it out, tira linha execute. No GET produto, execute \
-Teste: localhost:8080/metrics
+localhost:8080/metrics
 
 ---
 
@@ -73,9 +73,9 @@ Teste: localhost:8080/metrics
 
 Adicionando Prometheus no Docker Compose (linhas 26 a 33)
 
-Pra saber o nome da imagem certa: hub.docker.com. \
-Pesquisar prometheus, é o prom/prometheus by prom. \
-Usar a tag com a última versão sem ser a latest.
+Pra saber o nome da imagem certa: hub.docker.com \
+Pesquisar prometheus, é o prom/prometheus by prom \
+Usar a tag com a última versão sem ser a latest
 
 ```bash
 docker-compose up -d
@@ -132,10 +132,10 @@ kubectl top pods --all-namespaces
 
 Pegue o external IP do api-service e teste no browser. Ex. xx.xx.xx/swagger \
 Clicar GET produto, try it out, execute. \
-Testar /metrics. \
+Testar /metrics.
 
 Instalação do Prometheus (ArtifactHUB) \
-artifacthub.io > pesquisar prometheus e instalar seguindo o manual "get helm info". \
+artifacthub.io > pesquisar prometheus e instalar seguindo o manual "get helm info".
 
 `helm repo list prometheus-community` deve aparecer. \
 `helm search repo prometheus`
@@ -147,8 +147,7 @@ alertmanager: false \
 persistentVolume: false \
 service/type: loadbalancer \
 pushgatway: false \
-
-Salve o arquivo. \
+Salve o arquivo.
 
 Instalação:
 ```bash
@@ -166,8 +165,8 @@ Ir no /config só pra verificar. \
 
 ## Configurando Coleta (annotations)
 Pra passar a coletar, precisa de annotations (k8s/api/deploy.yaml linhas 12 a 15).
-
-`kubect apply -f ./api/deployment.yaml`
+ 
+`kubect apply -f ./api/deployment.yaml` \
 /targets pra ver se o pod tá sendo visto. \
 Teste: mudar quantidade de réplicas, aplica e ver /targets.
 
@@ -190,28 +189,29 @@ Primeiro passo é ver qual métrica usar pelo /metrics.
 Vamos testar http_request_received_total > execute \
 Mostra quantidade agrupada por code (200, 404 etc), controller, entre outros.
 
-Pra simular requisições, abre terminal: \
+Pra simular requisições, abre terminal:
 
 ```bash
 while true; do curl http://localhost:8080/produto; sleep 1; done;
 ```
 
 Em Table dá pra colocar espaço de tempo. \
-Em Graph aparece um gráfico. \
+Em Graph aparece um gráfico.
 
 Filtros: \
-Ele tá me retornando vários valores, dá pra filtrar pelo code 200: http_requests_received_total(code="200") \
+Ele tá me retornando vários valores. Dá pra filtrar pelo code 200: http_requests_received_total(code="200") \
 Pelo method: http_requests_received_total(method="GET")
 
 ### Exemplo 2: MongoDB
-Vamos ver outra métrica, agora do mongodb: mongodb_op_counters_total (número de comandos de consulta feitas no mongodb) agrupado por type. \
-Também posso filtrar, por exemplo, pelo type: mongodb_op_counters_total(type="query") (mostra só as consultas).
+Vamos ver outra métrica. Agora do mongodb: \
+mongodb_op_counters_total (número de comandos de consulta feitas no mongodb) agrupado por type. \
+Também posso filtrar, por exemplo, pelo type: mongodb_op_counters_total(type="query") -> mostra só as consultas.
 
 #### Operadores:
 * Negação: PromQL aceita negação. mongodb_op_counters_total(type!="query") (mostra todos diferentes de query: delete, insert etc).
 * Expressões Regulares: mongodb_op_counters_total(type=~"query|command") (mostra todos com type query e command).
 
-Vetores e Tempo: Trabalhamos com instant vector, agora vamos ver range vector para usar métricas de certo tempo. \ 
+Vetores e Tempo: Trabalhamos com instant vector, agora vamos ver range vector para usar métricas de certo tempo. 
 mongodb_op_counters_total[1m]: métricas do último minuto.
 
 Se aparecer várias amostras, é devido ao scrape_interval. Se aparecer 12 amostras no ultimo minuto é o scrape interval que tá 5s (5x12=60s).
