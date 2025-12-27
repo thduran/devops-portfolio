@@ -35,7 +35,8 @@ Pode configurar quando apagar/compactar os dados. \
 Ao compactar ganha espaço mas perde precisão. \
 Devido a isso métricas de negocio é recomendado armazenar em outro lugar e não no prometheus, que pode ficar so com as métricas de sistema.
 
-* Adapter: Permite armazenar os dados em outros lugares, como o Elasticsearch, OpenTSDB. Ele pode ser somente leitura, somente escrita ou escrita e leitura.
+* Adapter
+Permite armazenar os dados em outros lugares, como o Elasticsearch, OpenTSDB. Ele pode ser somente leitura, somente escrita ou escrita e leitura.
 
 * Retrieval \
 Parte de coleta das métricas. \
@@ -121,7 +122,7 @@ Pegue http_request_duration_seconds_sum e joga no /graph.
 
 ## 5. Instalação via Kubernetes (Helm)
 
-Primeiro deve instalar metric server. Teste com kubectl top pods. \ 
+Primeiro deve instalar metric server. Teste com kubectl top pods.
 Teremos deployment.yaml e service.yaml da API e deployment.yaml e service.yaml pro MongoDB. 
 
 ```bash
@@ -140,7 +141,7 @@ artifacthub.io > pesquisar prometheus e instalar seguindo o manual "get helm inf
 `helm repo list prometheus-community` deve aparecer. \
 `helm search repo prometheus`
 
-Configuração dos values: \
+Configuração dos values: \ \
 `helm inspect values prometheus-community/prometheus > values.yaml` \
 Edições no arquivo values.yaml: \
 alertmanager: false \
@@ -157,7 +158,7 @@ kubectl get pods -n prometheus
 kubectl get svc -n prometheus
 ```
 
-Testar IP no browser. \ 
+Testar IP no browser.
 Ir no /config só pra verificar. \
 /targets vai ver que não tá coletando do pod.
 
