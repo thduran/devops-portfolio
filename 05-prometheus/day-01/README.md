@@ -35,7 +35,7 @@ Pode configurar quando apagar/compactar os dados. \
 Ao compactar ganha espaço mas perde precisão. \
 Devido a isso métricas de negocio é recomendado armazenar em outro lugar e não no prometheus, que pode ficar so com as métricas de sistema.
 
-* Adapter
+* Adapter \
 Permite armazenar os dados em outros lugares, como o Elasticsearch, OpenTSDB. Ele pode ser somente leitura, somente escrita ou escrita e leitura.
 
 * Retrieval \
@@ -96,7 +96,7 @@ Teste localhost:9090
 ## 4. Configurando Scrape (Coleta)
 
 
-4.1 No momento só tá coletando métricas do Prometheus, mas pra coletar da api:
+##### 4.1 No momento só tá coletando métricas do Prometheus, mas pra coletar da api:
 
 Crio prometheus.yaml (até linha 17). \
 Mapeio volume no docker-compose.yaml (linha 21).
@@ -107,7 +107,7 @@ docker container ls
 ```
 Dando um F5 em /config e /targets poderá ver as atualizações.
 
-4.2 Coletando do MongoDB (Exporter) \
+##### 4.2 Coletando do MongoDB (Exporter) \
 Pra coletar do MongoDB também, vamos usar um exporter (linhas 28 a 37 do docker-compose.yaml).
 
 Deve adicionar também no prometheus.yaml (linhas 19 a 24).
@@ -122,7 +122,7 @@ Pegue http_request_duration_seconds_sum e joga no /graph.
 
 ## 5. Instalação via Kubernetes (Helm)
 
-Primeiro deve instalar metric server. Teste com kubectl top pods.
+Primeiro deve instalar metric server. Teste com kubectl top pods. \
 Teremos deployment.yaml e service.yaml da API e deployment.yaml e service.yaml pro MongoDB. 
 
 ```bash
@@ -141,7 +141,8 @@ artifacthub.io > pesquisar prometheus e instalar seguindo o manual "get helm inf
 `helm repo list prometheus-community` deve aparecer. \
 `helm search repo prometheus`
 
-Configuração dos values: \ \
+Configuração dos values: \
+
 `helm inspect values prometheus-community/prometheus > values.yaml` \
 Edições no arquivo values.yaml: \
 alertmanager: false \
