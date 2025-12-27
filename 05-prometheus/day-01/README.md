@@ -107,7 +107,7 @@ docker container ls
 ```
 Dando um F5 em /config e /targets poderá ver as atualizações.
 
-##### 4.2 Coletando do MongoDB (Exporter) \
+##### 4.2 Coletando do MongoDB (Exporter)
 Pra coletar do MongoDB também, vamos usar um exporter (linhas 28 a 37 do docker-compose.yaml).
 
 Deve adicionar também no prometheus.yaml (linhas 19 a 24).
@@ -141,7 +141,7 @@ artifacthub.io > pesquisar prometheus e instalar seguindo o manual "get helm inf
 `helm repo list prometheus-community` deve aparecer. \
 `helm search repo prometheus`
 
-Configuração dos values: \
+Configuração dos values:
 
 `helm inspect values prometheus-community/prometheus > values.yaml` \
 Edições no arquivo values.yaml: \
