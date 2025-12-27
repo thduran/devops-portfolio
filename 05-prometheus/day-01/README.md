@@ -340,4 +340,4 @@ while true; do curl http://localhost:8080/produto; sleep 0.5; done
 Teste:
 localhost:9090/alerts > vai entrar em pending e firing.
 No alertmanager (localhost:9093/alerts), os alertas vão aparecer.
-No heroku vai aparecer o alerta.
+No heroku vai aparecer o aledssrta.
