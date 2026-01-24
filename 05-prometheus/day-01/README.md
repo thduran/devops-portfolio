@@ -1,8 +1,18 @@
+observabilidade
+
+capacidade de entender a situação da aplicação/ambiente
+
+benefícios
+
+antecipar problemas, identificar causa raiz de problemas, entender melhorias possíveis
+
+serve também pra validaar ou não mudanças/melhorias feitas na aplicação/ambiente, além de permitir dar feedback para todas as equipes
+
 ## 1. Pilares da Observabilidade
 
 * Métricas: Valores numéricos sobre software/infra.
 Ex: CPU, nº de requisições, nº de instâncias.
-* Logs: Info sobre eventos do app/infra.
+* Logs: Info textual sobre eventos do app/infra.
 * Tracing: Rastro do fluxo de eventos ao longo dos microserviços.
 
 ## Ferramentas
@@ -13,7 +23,7 @@ Ex: CPU, nº de requisições, nº de instâncias.
 * Grafana: Visualização
 
 ## Classificação de Métricas
-As métricas se dividem em métricas de sistema e de negócio.
+As métricas se dividem em métricas de sistema e de negócio. Uma impacta a outra.
 
 * Sistema: APIs mais acessadas, nº de erros.
 * Negócio: Nº de usuários, nº de compras.
@@ -60,13 +70,14 @@ Comandos iniciais:
 ```bash
 docker-compose up -d
 docker container ls
-Teste da API:
 ```
 
 Browser teste: \
 localhost:8080/swagger \
 Clicar em GET produto, execute. Depois em POST produto, try it out, tira linha execute. No GET produto, execute \
 localhost:8080/metrics
+
+> Há outro exemplo de compose.yaml (../day-02/compose.yaml)
 
 ---
 
@@ -89,7 +100,7 @@ Teste localhost:9090
 * /status: runtime, build infos
 * /tsbd_status: infos do tsdb, métricas armazenadas
 * /flags: configuração de linha de comando
-* /config: estrutura de config do prom atual
+* /config: estrutura de config do prometheus atual
 * /rules
 * /targets: endpoints que estão sendo coletados métricas
 
@@ -142,6 +153,7 @@ artifacthub.io > pesquisar prometheus e instalar seguindo o manual "get helm inf
 `helm search repo prometheus`
 
 Configuração dos values:
+> Para otimizar da configuração
 
 `helm inspect values prometheus-community/prometheus > values.yaml` \
 Edições no arquivo values.yaml: \
@@ -150,6 +162,9 @@ persistentVolume: false \
 service/type: loadbalancer \
 pushgatway: false \
 Salve o arquivo.
+
+Obs. Também é possível criar um arquivo values.yaml do zero apenas com as configurações desejadas (../day-02/values.yaml). \
+Comando para instalação: `helm upgrade prometheus oci://ghcr.io/prometheus-community/charts/prometheus --values values.yaml --namespace monitoramento --install` \
 
 Instalação:
 ```bash
@@ -164,6 +179,12 @@ Ir no /config só pra verificar. \
 /targets vai ver que não tá coletando do pod.
 
 ---
+
+### Coleta
+
+Instrumentação da aplicação: adicionar recursos no código para exibir as métricas. \
+Para isso, é preciso definir quais métricas desejo expor. Depende da pergunta que quero responder, por exemplo "Como está a performance da aplicação?", "Quantos acessos tive na minha aplicação?" \ 
+* Em ../day-03 implementamos instrumentação em outro projeto
 
 ## Configurando Coleta (annotations)
 Pra passar a coletar, precisa de annotations (k8s/api/deploy.yaml linhas 12 a 15).

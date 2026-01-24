@@ -3,13 +3,13 @@ kind: Deployment
 metadata:                    
   name: api-deployment      
 spec:                        
-  replicas: 1
+  replicas: 1 # posso aumentar/diminuir e olhar /targets para ver os endpoints do prometheus aumentando e diminuindo
 selector:
   matchLabels:
     app: api
   template:
     metadata:
-      annotations:
+      annotations: # para service discovery
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
         prometheus.io/port: "80"

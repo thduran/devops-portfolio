@@ -1,0 +1,24 @@
+services:
+  conversao-temperatura:
+    image: fabricioveronez/conversao-temperatura:v1
+    ports:
+      - "8080:8080"
+    networks:
+      - monitoramento
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml' # para persistencia
+      - '--storage.tsdb.path=/prometheus'              # de dados
+    networks:
+      - monitoring
+
+networks:
+  monitoramento:
+    driver: bridge

@@ -1,0 +1,14 @@
+server:
+  service:
+    type: LoadBalancer
+
+alertmanager:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: false
+
+prometheus-pushgateway:
+  enabled: false
+
+# estou alterando o service e desabilitando os outros services do prometheus que não irei utilizAR
