@@ -1,0 +1,104 @@
+services:
+  app:
+    build:
+      context: ../day-03/introducao-instrumentacao-main/introducao-instrumentacao-main/01-projeto-inicial/src
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=ecommerce
+      - DB_PASSWORD=Pg1234
+      - DB_NAME=ecommerce
+      - DB_PORT=5432
+      - FLASK_APP=index.py
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=ecommerce
+      - POSTGRES_PASSWORD=Pg1234
+      - POSTGRES_DB=ecommerce
+    networks:
+      - app-network
+    volumes:
+      - .docker_volumes/postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+  
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    ports:
+      - "9187:9187"
+    environment:
+      - DATA_SOURCE_URI=postgres:5432/ecommerce?sslmode=disable
+      - DATA_SOURCE_USER=ecommerce
+      - DATA_SOURCE_PASS=Pg1234
+    networks:
+      - app-network
+
+  pushgateway:
+    image: prom/pushgateway:latest
+    ports:
+      - "9091:9091"
+    networks:
+      - app-network
+    restart: unless-stopped
+    command:
+      - '--web.listen-address=:9091'
+      - '--persistence.file=/tmp/pushgateway.data'
+      - '--persistence.interval=5s'
+    volumes:
+      - .docker_volumes/pushgateway_data:/tmp
+    
+  batch:
+    image: fabricioveronez/fake-shop-batch:v1
+    build:
+      context: ../day-03/introducao-instrumentacao-main/introducao-instrumentacao-main/01-projeto-inicial/batch
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=ecommerce
+      - DB_PASSWORD=Pg1234
+      - DB_NAME=ecommerce
+      - DB_PORT=5432
+      - PUSHGATEWAY_URL=http://pushgateway:9091
+      - REPORT_DATE=${REPORT_DATE:-today}  
+      - REPORT_OUTPUT_DIR=${REPORT_OUTPUT_DIR:-/app/pdf-reports}  
+    volumes:
+      - .docker_volumes/reports:/app/pdf-reports 
+    profiles:
+      - batch # pra dar o compose trocando o profile a fim de executar o batch
+    networks:
+      - app-network
+    
+
+volumes:
+  pushgateway_data:
+    
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   ports:
+  #     - "9090:9090"
+  #   networks:
+  #     - app-network
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  #     - .docker_volumes/prometheus_data:/prometheus
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #     - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+  #     - '--web.console.templates=/usr/share/prometheus/consoles'
+  #     - '--web.enable-lifecycle'
+
+networks:
+  app-network:
+    driver: bridge

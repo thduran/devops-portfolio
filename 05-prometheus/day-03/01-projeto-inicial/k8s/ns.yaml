@@ -1,0 +1,5 @@
+# Namespace Ajustado para bater com seu ExternalName
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoramento # Alterado de 'monitoring' para 'monitoramento'

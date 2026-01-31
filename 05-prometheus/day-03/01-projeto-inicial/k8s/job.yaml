@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: batch-reports-pvc
+  labels:
+    app: batch-reports
+spec:
+  accessModes:
+    - ReadWriteOnce
+  # storageClassName: do-block-storage-xfs-retain
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service   
+metadata:
+  name: pushgateway
+  labels:
+    app: pushgateway-proxy
+spec:
+  type: ExternalName
+  externalName: prometheus-prometheus-pushgateway.monitoramento.svc.cluster.local
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ecommerce-batch-job
+  labels:
+    app: ecommerce-batch
+    component: report-generator
+spec:
+  # Configurações do Job
+  backoffLimit: 3
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        app: ecommerce-batch
+        component: report-generator
+    spec:
+      restartPolicy: OnFailure      
+      containers:
+      - name: batch
+        image: fabricioveronez/fake-shop-batch:v1
+        env:
+        - name: DB_HOST
+          value: "postgres"
+        - name: DB_USER
+          value: "ecommerce"
+        - name: DB_PASSWORD
+          value: "Pg1234"
+        - name: DB_NAME
+          value: "ecommerce"
+        - name: DB_PORT
+          value: "5432"
+        - name: PUSHGATEWAY_URL
+          value: "http://pushgateway:9091"
+        - name: REPORT_DATE
+          value: "today"
+        - name: REPORT_OUTPUT_DIR
+          value: "/app/pdf-reports"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: reports-volume
+          mountPath: /app/pdf-reports
+      volumes:
+      - name: reports-volume
+        persistentVolumeClaim:
+          claimName: batch-reports-pvc

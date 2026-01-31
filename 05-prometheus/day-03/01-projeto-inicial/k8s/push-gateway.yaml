@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: monitoramento
+  name: pushgateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pushgateway
+  template:
+    metadata:
+      labels:
+        app: pushgateway
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9091"
+    spec:
+      containers:
+      - name: pushgateway
+        image: prom/pushgateway:latest
+        ports:
+        - containerPort: 9091
+        args:
+          - "--persistence.file=/tmp/pushgateway.data"
+          - "--persistence.interval=5s"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: monitoramento
+  name: prometheus-prometheus-pushgateway # Nome exato exigido pelo seu ExternalName
+spec:
+  ports:
+  - port: 9091
+    targetPort: 9091
+    name: http
+  selector:
+    app: pushgateway
+  type: ClusterIP
