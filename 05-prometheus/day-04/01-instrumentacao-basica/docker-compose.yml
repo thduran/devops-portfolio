@@ -1,0 +1,54 @@
+services:
+  app:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=ecommerce
+      - DB_PASSWORD=Pg1234
+      - DB_NAME=ecommerce
+      - DB_PORT=5432
+      - FLASK_APP=index.py
+    depends_on:
+      - postgres
+    networks:
+      - app-network      
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=ecommerce
+      - POSTGRES_PASSWORD=Pg1234
+      - POSTGRES_DB=ecommerce
+    networks:
+      - app-network      
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    ports:
+      - "9187:9187"  # Porta padrão do postgres-exporter
+    environment:
+      - DATA_SOURCE_URI=postgres:5432/ecommerce?sslmode=disable
+      - DATA_SOURCE_USER=ecommerce
+      - DATA_SOURCE_PASS=Pg1234
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

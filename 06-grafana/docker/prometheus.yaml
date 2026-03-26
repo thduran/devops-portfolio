@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'techcommerce-monitor'
+    environment: 'development'
+
+scrape_configs:
+  # Prometheus auto-discovery
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Aplicação E-commerce Flask
+  - job_name: 'ecommerce-app'
+    static_configs:
+      - targets: ['app:5000']
+    metrics_path: '/metrics'
+

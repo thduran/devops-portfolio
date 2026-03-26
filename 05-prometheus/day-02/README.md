@@ -1,1 +1,1 @@
-Os 2 arquivos de day-02 estão referenciados no README do day-01
+Os 2 arquivos do day-02 estão referenciados no README do day-01.

@@ -1,12 +1,7 @@
-observabilidade
+# Observabilidade
+Definição: é a capacidade de entender a situação da aplicação/ambiente/infra.
 
-capacidade de entender a situação da aplicação/ambiente
-
-benefícios
-
-antecipar problemas, identificar causa raiz de problemas, entender melhorias possíveis
-
-serve também pra validaar ou não mudanças/melhorias feitas na aplicação/ambiente, além de permitir dar feedback para todas as equipes
+Benefícios: antecipar problemas, identificar causa raiz de problemas, entender melhorias possíveis. Serve também pra validar ou não mudanças/melhorias feitas na aplicação/ambiente, além de permitir dar feedback para todas as equipes.
 
 ## 1. Pilares da Observabilidade
 
@@ -83,7 +78,7 @@ localhost:8080/metrics
 
 ## Hands-on:
 
-Adicionando Prometheus no Docker Compose (linhas 26 a 33)
+Adicionando Prometheus no Docker Compose (linhas 39 a 49)
 
 Pra saber o nome da imagem certa: hub.docker.com \
 Pesquisar prometheus, é o prom/prometheus by prom \
@@ -109,8 +104,8 @@ Teste localhost:9090
 
 ##### 4.1 No momento só tá coletando métricas do Prometheus, mas pra coletar da api:
 
-Crio prometheus.yaml (até linha 17). \
-Mapeio volume no docker-compose.yaml (linha 21).
+Crio a base do prometheus.yaml \
+Mapeio volume no docker-compose.yaml (linha 39).
 
 ```bash
 docker compose up -d
@@ -121,7 +116,7 @@ Dando um F5 em /config e /targets poderá ver as atualizações.
 ##### 4.2 Coletando do MongoDB (Exporter)
 Pra coletar do MongoDB também, vamos usar um exporter (linhas 28 a 37 do docker-compose.yaml).
 
-Deve adicionar também no prometheus.yaml (linhas 19 a 24).
+Deve adicionar também no prometheus.yaml (linhas 22 a 27).
 
 ```bash
 docker-compose up -d
@@ -187,15 +182,15 @@ Para isso, é preciso definir quais métricas desejo expor. Depende da pergunta 
 * Em ../day-03 implementamos instrumentação em outro projeto
 
 ## Configurando Coleta (annotations)
-Pra passar a coletar, precisa de annotations (k8s/api/deploy.yaml linhas 12 a 15).
+Pra passar a coletar, precisa de annotations (k8s/api/deployment.yaml linhas 12 a 15).
  
 `kubect apply -f ./api/deployment.yaml` \
 /targets pra ver se o pod tá sendo visto. \
 Teste: mudar quantidade de réplicas, aplica e ver /targets.
 
 ## Coleta do MongoDB em K8s (Sidecar)
-Para coleta do MongoDB em k8s vamos usar um sidecar, que é um container auxiliar usado para requisitos não funcionais (linhas 26 a 33). \
-Declara que deve ser coletado com annotation (linhas 11 a 14).
+Para coleta do MongoDB em k8s vamos usar um sidecar, que é um container auxiliar usado para requisitos não funcionais (linhas 28 a 37). \
+Declara que deve ser coletado com annotation (linhas 12 a 15).
 
 ```bash
 kubectl apply -f ./mongodb/deployment.yaml

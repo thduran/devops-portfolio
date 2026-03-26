@@ -1,0 +1,73 @@
+services:
+  app:
+    image: fabricioveronez/fake-shop:v1
+    build:
+      context: ./web/src
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=ecommerce
+      - DB_PASSWORD=Pg1234
+      - DB_NAME=ecommerce
+      - DB_PORT=5432
+      - FLASK_APP=index.py
+    depends_on:
+      - postgres
+    networks:
+      - app-network      
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=ecommerce
+      - POSTGRES_PASSWORD=Pg1234
+      - POSTGRES_DB=ecommerce
+    networks:
+      - app-network      
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  grafana:
+    image: grafana/grafana-oss:12.3.1
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - app-network
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:v3.9.1
+    ports:
+      - "9090:9090"
+    networks:
+      - app-network
+    depends_on:
+      - app
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'  
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data: {}
+  grafana_data: {}      
+  prometheus_data: {}

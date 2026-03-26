@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechCommerce - Relatório de Vendas</title>
+    <style>
+        /* Reset e base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #ffffff;
+            margin: 20px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2196F3;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px 20px 20px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .header h1 {
+            color: #2196F3;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header h2 {
+            color: #555;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+        
+        .header .date-info {
+            background: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+        
+        /* Summary section */
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .summary h2 {
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .metric {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        
+        /* Section styling */
+        .section {
+            margin-bottom: 40px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .section h3 {
+            background: #f8f9fa;
+            color: #333;
+            padding: 20px 25px;
+            margin: 0;
+            font-size: 1.5em;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .section-content {
+            padding: 25px;
+        }
+        
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+        
+        th {
+            background: #2196F3;
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85em;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tr:hover {
+            background: #e3f2fd;
+            transition: background 0.3s ease;
+        }
+        
+        .position-badge {
+            background: #FF6B6B;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        
+        .position-badge:nth-child(1) { background: #FFD700; color: #333; }
+        .position-badge:nth-child(2) { background: #C0C0C0; color: #333; }
+        .position-badge:nth-child(3) { background: #CD7F32; color: white; }
+        
+        .currency {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .quantity {
+            color: #2196F3;
+            font-weight: 600;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .empty-state::before {
+            content: "📊";
+            font-size: 3em;
+            display: block;
+            margin-bottom: 15px;
+        }
+        
+        /* Progress bars for hourly distribution */
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .percentage-text {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            color: #666;
+            border-top: 3px solid #2196F3;
+        }
+        
+        .footer p {
+            margin-bottom: 8px;
+        }
+        
+        .footer .tech-info {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .header h2 {
+                font-size: 1.4em;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metric-value {
+                font-size: 1.5em;
+            }
+            
+            table {
+                font-size: 0.85em;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                margin: 0;
+                color: #000;
+            }
+            
+            .header {
+                background: none !important;
+                border-bottom: 2px solid #000;
+            }
+            
+            .summary {
+                background: none !important;
+                color: #000 !important;
+                border: 2px solid #000;
+            }
+            
+            .section {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+            
+            .metric {
+                background: none !important;
+            }
+            
+            .metric-value {
+                color: #000 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 TECHCOMMERCE</h1>
+        <h2>Relatório Diário de Vendas</h2>
+        <div class="date-info">
+            <strong>📅 Data:</strong> {{ report_date_formatted }}
+        </div>
+    </div>
+
+    <div class="summary">
+        <h2>📈 Resumo Financeiro</h2>
+        <div class="metrics-grid">
+            <div class="metric">
+                <div class="metric-label">Total de Pedidos</div>
+                <div class="metric-value">{{ summary.total_orders }}</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Faturamento Total</div>
+                <div class="metric-value">R$ {{ "%.2f"|format(summary.total_revenue) }}</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Ticket Médio</div>
+                <div class="metric-value">R$ {{ "%.2f"|format(summary.avg_ticket) }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>🏆 Top {{ top_products|length }} Produtos Mais Vendidos</h3>
+        <div class="section-content">
+            {% if top_products %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Posição</th>
+                        <th>Produto</th>
+                        <th>Quantidade Vendida</th>
+                        <th>Receita do Produto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in top_products %}
+                    <tr>
+                        <td>
+                            <span class="position-badge">{{ loop.index }}º</span>
+                        </td>
+                        <td>{{ product.product_name }}</td>
+                        <td class="quantity">{{ product.quantity_sold }} unidades</td>
+                        <td class="currency">R$ {{ "%.2f"|format(product.product_revenue) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                Nenhum produto vendido nesta data.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>⏰ Distribuição de Vendas por Horário</h3>
+        <div class="section-content">
+            {% if hourly_data %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Horário</th>
+                        <th>Quantidade de Pedidos</th>
+                        <th>Percentual do Dia</th>
+                        <th>Representação Visual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hour_data in hourly_data %}
+                    <tr>
+                        <td>{{ "%02d"|format(hour_data.hour) }}:00 - {{ "%02d"|format(hour_data.hour + 1) }}:00</td>
+                        <td class="quantity">{{ hour_data.orders_count }}</td>
+                        <td class="percentage-text">{{ "%.1f"|format(hour_data.percentage) }}%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ hour_data.percentage }}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                Nenhuma venda registrada nesta data.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>📊 Relatório gerado automaticamente pelo sistema TechCommerce</strong></p>
+        <p>🕒 Gerado em: {{ generation_timestamp }}</p>
+        <p class="tech-info">🤖 Tecnologia: Job Batch + Push Gateway + Prometheus</p>
+        <p class="tech-info">🐳 Infraestrutura: Docker + PostgreSQL + Python</p>
+    </div>
+</body>
+</html>
